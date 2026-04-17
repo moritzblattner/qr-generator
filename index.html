@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Generator | BearingPoint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Archivo+Black&display=swap');
+
+  :root {
+    /* BearingPoint Primary */
+    --bp-red: #E2001A;
+    --bp-red-hover: #C8001A;
+    --bp-deep-red: #6E0B14;
+    --bp-black: #000000;
+    --bp-white: #FFFFFF;
+
+    /* Warm Grays */
+    --bp-g10: #F0EDEA;
+    --bp-g20: #D1CBC4;
+    --bp-g30: #B5ADA4;
+
+    /* Red Tones */
+    --bp-r40: #E8A99E;
+    --bp-r60: #C2574D;
+    --bp-r70: #8B3A32;
+
+    /* Borders */
+    --bp-border-light: #E8E5E1;
+    --bp-border-medium: #D1CBC4;
+
+    /* Semantic */
+    --bp-focus: #7B61FF;
+
+    /* Typography */
+    --font-display: 'Archivo Black', 'Arial Black', sans-serif;
+    --font-body: 'Inter', 'Calibri', 'Helvetica Neue', sans-serif;
+
+    /* Spacing */
+    --space-4: 4px;
+    --space-8: 8px;
+    --space-12: 12px;
+    --space-16: 16px;
+    --space-24: 24px;
+    --space-32: 32px;
+    --space-48: 48px;
+    --space-64: 64px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bp-white);
+    color: var(--bp-black);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    background: var(--bp-white);
+    border-bottom: 1px solid var(--bp-border-light);
+    padding: 0 var(--space-32);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--bp-black);
+    letter-spacing: -0.3px;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-24);
+  }
+  .nav-links a {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--bp-black);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover {
+    color: var(--bp-red);
+  }
+
+  /* ── Hero / Header ── */
+  .hero {
+    padding: var(--space-64) var(--space-32) var(--space-48);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-accent {
+    width: 60px;
+    height: 2px;
+    background: var(--bp-red);
+    margin-bottom: var(--space-24);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.3px;
+    color: var(--bp-black);
+    margin-bottom: var(--space-12);
+    text-align: left;
+  }
+  .hero p {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--bp-black);
+    text-align: left;
+  }
+
+  /* ── Main Layout ── */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-32) var(--space-64);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-48);
+    align-items: start;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bp-white);
+    border: 1px solid var(--bp-border-light);
+    border-radius: 0;
+    padding: var(--space-24);
+    margin-bottom: var(--space-16);
+  }
+  .card:hover {
+    border-color: var(--bp-g30);
+  }
+  .card-title {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bp-black);
+    margin-bottom: var(--space-16);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--bp-border-light);
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .card-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--bp-red);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* ── Form Elements ── */
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bp-black);
+    margin-bottom: var(--space-4);
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    padding: var(--space-12) var(--space-16);
+    border: 1px solid var(--bp-border-medium);
+    border-radius: 0;
+    font-size: 16px;
+    font-family: var(--font-body);
+    color: var(--bp-black);
+    background: var(--bp-white);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input[type="text"]::placeholder, textarea::placeholder {
+    color: var(--bp-g30);
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--bp-focus);
+    box-shadow: 0 0 0 2px var(--bp-focus);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23000000' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  .field { margin-bottom: var(--space-16); }
+  .field:last-child { margin-bottom: 0; }
+  .row { display: flex; gap: var(--space-12); }
+  .row .field { flex: 1; }
+
+  /* ── Color Pickers ── */
+  .color-row {
+    display: flex;
+    gap: var(--space-8);
+    align-items: center;
+  }
+  .color-row input[type="color"] {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--bp-border-medium);
+    border-radius: 0;
+    padding: 2px;
+    cursor: pointer;
+    background: var(--bp-white);
+  }
+  .color-row .hex { flex: 1; }
+
+  /* ── Icon Upload ── */
+  .icon-upload {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+  }
+  .icon-upload .btn-upload {
+    padding: var(--space-8) var(--space-16);
+    background: var(--bp-g10);
+    border: 1px solid var(--bp-border-medium);
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    color: var(--bp-black);
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .icon-upload .btn-upload:hover {
+    background: var(--bp-g20);
+  }
+  .icon-upload .file-name {
+    font-size: 13px;
+    color: var(--bp-g30);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .icon-upload .btn-clear {
+    background: none;
+    border: none;
+    color: var(--bp-red);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: var(--space-4);
+  }
+
+  /* ── Slider ── */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+  }
+  .slider-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--bp-g20);
+    outline: none;
+  }
+  .slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--bp-red);
+    border-radius: 0;
+    cursor: pointer;
+  }
+  .slider-row input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--bp-red);
+    border-radius: 0;
+    border: none;
+    cursor: pointer;
+  }
+  .slider-row .val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--bp-black);
+    min-width: 36px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── QR Preview ── */
+  .preview-column {
+    position: sticky;
+    top: 88px;
+  }
+  #qr-preview {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-32);
+    background: var(--bp-g10);
+    border: 1px solid var(--bp-border-light);
+    border-radius: 0;
+    margin-bottom: var(--space-16);
+  }
+  #qr-canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ── Buttons ── */
+  .actions {
+    display: flex;
+    gap: var(--space-12);
+  }
+  .actions button {
+    flex: 1;
+    padding: var(--space-12) var(--space-24);
+    border: none;
+    border-radius: 0;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-primary {
+    background: var(--bp-black);
+    color: var(--bp-white);
+  }
+  .btn-primary:hover {
+    background: #333333;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--bp-black);
+    border: 1px solid var(--bp-black) !important;
+  }
+  .btn-secondary:hover {
+    background: var(--bp-black);
+    color: var(--bp-white);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    background: var(--bp-deep-red);
+    padding: var(--space-32);
+    text-align: left;
+    margin-top: var(--space-64);
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--bp-white);
+  }
+  .footer-text {
+    font-size: 13px;
+    color: var(--bp-white);
+    opacity: 0.7;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .main {
+      grid-template-columns: 1fr;
+      padding: 0 var(--space-16) var(--space-48);
+    }
+    .hero {
+      padding: var(--space-48) var(--space-16) var(--space-32);
+    }
+    .hero h1 { font-size: 28px; }
+    .nav { padding: 0 var(--space-16); }
+    .nav-links { display: none; }
+    .preview-column { position: static; }
+    .footer-inner { flex-direction: column; gap: var(--space-8); text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="#" class="nav-logo">BearingPoint</a>
+  <div class="nav-links">
+    <a href="#">Tools</a>
+    <a href="#">Resources</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-accent"></div>
+  <h1>QR Code Generator</h1>
+  <p>Create customized QR codes with your branding. Adjust shape, color, and add a center icon.</p>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <!-- Left: Controls -->
+  <div class="controls-column">
+    <div class="card">
+      <div class="card-title">Content</div>
+      <div class="field">
+        <label>URL or Text</label>
+        <textarea id="qr-text" placeholder="Enter URL or text...">https://www.bearingpoint.com</textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Appearance</div>
+      <div class="row">
+        <div class="field">
+          <label>Module Shape</label>
+          <select id="shape">
+            <option value="square">Square</option>
+            <option value="rounded">Rounded</option>
+            <option value="dots">Dots</option>
+            <option value="diamond">Diamond</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Error Correction</label>
+          <select id="ec-level">
+            <option value="L">Low (7%)</option>
+            <option value="M" selected>Medium (15%)</option>
+            <option value="Q">Quartile (25%)</option>
+            <option value="H">High (30%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Foreground</label>
+          <div class="color-row">
+            <input type="color" id="fg-color" value="#000000">
+            <input type="text" class="hex" id="fg-hex" value="#000000">
+          </div>
+        </div>
+        <div class="field">
+          <label>Background</label>
+          <div class="color-row">
+            <input type="color" id="bg-color" value="#ffffff">
+            <input type="text" class="hex" id="bg-hex" value="#ffffff">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Center Icon</div>
+      <div class="field">
+        <label>Upload Image</label>
+        <div class="icon-upload">
+          <label class="btn-upload" for="icon-input">Choose Image</label>
+          <input type="file" id="icon-input" accept="image/*" hidden>
+          <span class="file-name" id="icon-name">No icon selected</span>
+          <button class="btn-clear" id="icon-clear" title="Remove icon" style="display:none">&times;</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Icon Size</label>
+        <div class="slider-row">
+          <input type="range" id="icon-size" min="10" max="40" value="22">
+          <span class="val" id="icon-size-val">22%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Preview & Download -->
+  <div class="preview-column">
+    <div id="qr-preview">
+      <canvas id="qr-canvas" width="400" height="400"></canvas>
+    </div>
+    <div class="actions">
+      <button class="btn-secondary" id="btn-svg">Download SVG</button>
+      <button class="btn-primary" id="btn-png">Download PNG</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">BearingPoint</span>
+    <span class="footer-text">Internal Tool</span>
+  </div>
+</div>
+
+<!-- QR code generation library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const canvas = $('qr-canvas');
+  const ctx = canvas.getContext('2d');
+  const SIZE = 400;
+  canvas.width = SIZE;
+  canvas.height = SIZE;
+
+  let iconImg = null;
+
+  function syncColor(picker, hex) {
+    picker.addEventListener('input', () => { hex.value = picker.value; render(); });
+    hex.addEventListener('input', () => {
+      if (/^#[0-9a-f]{6}$/i.test(hex.value)) { picker.value = hex.value; render(); }
+    });
+  }
+  syncColor($('fg-color'), $('fg-hex'));
+  syncColor($('bg-color'), $('bg-hex'));
+
+  $('icon-input').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    $('icon-name').textContent = file.name;
+    $('icon-clear').style.display = '';
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => { iconImg = img; render(); };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  $('icon-clear').addEventListener('click', () => {
+    iconImg = null;
+    $('icon-input').value = '';
+    $('icon-name').textContent = 'No icon selected';
+    $('icon-clear').style.display = 'none';
+    render();
+  });
+
+  $('icon-size').addEventListener('input', () => {
+    $('icon-size-val').textContent = $('icon-size').value + '%';
+    render();
+  });
+
+  for (const id of ['qr-text', 'shape', 'ec-level']) {
+    $(id).addEventListener('input', render);
+  }
+
+  function getQR() {
+    const ecMap = { L: 1, M: 0, Q: 3, H: 2 };
+    const text = $('qr-text').value || ' ';
+    const ec = ecMap[$('ec-level').value];
+    const qr = qrcode(0, ec);
+    qr.addData(text);
+    qr.make();
+    return qr;
+  }
+
+  function render() {
+    const qr = getQR();
+    const moduleCount = qr.getModuleCount();
+    const fg = $('fg-color').value;
+    const bg = $('bg-color').value;
+    const shape = $('shape').value;
+    const margin = 2;
+    const totalModules = moduleCount + margin * 2;
+    const modSize = SIZE / totalModules;
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    const iconPct = parseInt($('icon-size').value) / 100;
+    const iconModules = iconImg ? Math.ceil(moduleCount * iconPct) : 0;
+    const iconStart = Math.floor((moduleCount - iconModules) / 2);
+    const iconEnd = iconStart + iconModules;
+
+    ctx.fillStyle = fg;
+    for (let row = 0; row < moduleCount; row++) {
+      for (let col = 0; col < moduleCount; col++) {
+        if (!qr.isDark(row, col)) continue;
+        if (iconImg && row >= iconStart && row < iconEnd && col >= iconStart && col < iconEnd) continue;
+
+        const x = (col + margin) * modSize;
+        const y = (row + margin) * modSize;
+        const s = modSize;
+
+        switch (shape) {
+          case 'square':
+            ctx.fillRect(x, y, s, s);
+            break;
+          case 'rounded': {
+            const r = s * 0.35;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + s - r, y);
+            ctx.quadraticCurveTo(x + s, y, x + s, y + r);
+            ctx.lineTo(x + s, y + s - r);
+            ctx.quadraticCurveTo(x + s, y + s, x + s - r, y + s);
+            ctx.lineTo(x + r, y + s);
+            ctx.quadraticCurveTo(x, y + s, x, y + s - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+            ctx.fill();
+            break;
+          }
+          case 'dots': {
+            const radius = s * 0.45;
+            ctx.beginPath();
+            ctx.arc(x + s / 2, y + s / 2, radius, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+          }
+          case 'diamond': {
+            const cx = x + s / 2, cy = y + s / 2, h = s * 0.5;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - h);
+            ctx.lineTo(cx + h, cy);
+            ctx.lineTo(cx, cy + h);
+            ctx.lineTo(cx - h, cy);
+            ctx.closePath();
+            ctx.fill();
+            break;
+          }
+        }
+      }
+    }
+
+    if (iconImg) {
+      const iconPx = iconModules * modSize;
+      const iconX = (iconStart + margin) * modSize;
+      const iconY = (iconStart + margin) * modSize;
+      const pad = modSize * 0.8;
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      const bx = iconX - pad, by = iconY - pad, bw = iconPx + pad * 2, bh = iconPx + pad * 2;
+      ctx.rect(bx, by, bw, bh);
+      ctx.fill();
+      ctx.drawImage(iconImg, iconX, iconY, iconPx, iconPx);
+      ctx.fillStyle = fg;
+    }
+  }
+
+  $('btn-png').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.download = 'qrcode.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+
+  $('btn-svg').addEventListener('click', () => {
+    const qr = getQR();
+    const moduleCount = qr.getModuleCount();
+    const shape = $('shape').value;
+    const fg = $('fg-color').value;
+    const bg = $('bg-color').value;
+    const margin = 2;
+    const total = moduleCount + margin * 2;
+    const s = 10;
+    const svgSize = total * s;
+
+    const iconPct = parseInt($('icon-size').value) / 100;
+    const iconModules = iconImg ? Math.ceil(moduleCount * iconPct) : 0;
+    const iconStart = Math.floor((moduleCount - iconModules) / 2);
+    const iconEnd = iconStart + iconModules;
+
+    let paths = '';
+    for (let row = 0; row < moduleCount; row++) {
+      for (let col = 0; col < moduleCount; col++) {
+        if (!qr.isDark(row, col)) continue;
+        if (iconImg && row >= iconStart && row < iconEnd && col >= iconStart && col < iconEnd) continue;
+        const x = (col + margin) * s;
+        const y = (row + margin) * s;
+        switch (shape) {
+          case 'square':
+            paths += `<rect x="${x}" y="${y}" width="${s}" height="${s}"/>`;
+            break;
+          case 'rounded': {
+            const r = s * 0.35;
+            paths += `<rect x="${x}" y="${y}" width="${s}" height="${s}" rx="${r}" ry="${r}"/>`;
+            break;
+          }
+          case 'dots':
+            paths += `<circle cx="${x + s/2}" cy="${y + s/2}" r="${s * 0.45}"/>`;
+            break;
+          case 'diamond':
+            paths += `<polygon points="${x+s/2},${y} ${x+s},${y+s/2} ${x+s/2},${y+s} ${x},${y+s/2}"/>`;
+            break;
+        }
+      }
+    }
+
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgSize} ${svgSize}" width="${svgSize}" height="${svgSize}">
+  <rect width="${svgSize}" height="${svgSize}" fill="${bg}"/>
+  <g fill="${fg}">${paths}</g>
+</svg>`;
+
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const a = document.createElement('a');
+    a.download = 'qrcode.svg';
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
