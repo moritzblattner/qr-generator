@@ -83,11 +83,16 @@
     margin: 0 auto;
   }
 
-  .controls, .preview-wrap {
+  .controls {
     min-height: 0;
     display: flex;
     flex-direction: column;
     gap: 14px;
+  }
+  .preview-wrap {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   /* ── Cards ── */
@@ -385,10 +390,18 @@
     border-radius: var(--radius);
     padding: 20px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
     box-shadow: var(--shadow-md);
     min-height: 0;
+  }
+  .qr-area {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .qr-frame {
     position: relative;
@@ -443,13 +456,14 @@
     border-color: var(--beige-800);
   }
   .btn-secondary {
-    background: transparent;
-    color: var(--beige-700);
-    border-color: var(--beige-300);
+    background: var(--beige-300);
+    color: var(--beige-800);
+    border-color: var(--beige-400);
   }
   .btn-secondary:hover {
-    background: var(--beige-100);
-    border-color: var(--beige-400);
+    background: var(--beige-400);
+    color: var(--beige-50);
+    border-color: var(--beige-500);
   }
 
   /* ── Responsive ── */
@@ -583,13 +597,15 @@
   <!-- Preview + actions -->
   <section class="preview-wrap">
     <div class="preview-card">
-      <div class="qr-frame transparent" id="qr-frame">
-        <canvas id="qr-canvas" width="400" height="400"></canvas>
+      <div class="qr-area">
+        <div class="qr-frame transparent" id="qr-frame">
+          <canvas id="qr-canvas" width="400" height="400"></canvas>
+        </div>
       </div>
-    </div>
-    <div class="actions">
-      <button class="btn-secondary" id="btn-svg">Download SVG</button>
-      <button class="btn-primary" id="btn-png">Download PNG</button>
+      <div class="actions">
+        <button class="btn-secondary" id="btn-svg">Download SVG</button>
+        <button class="btn-primary" id="btn-png">Download PNG</button>
+      </div>
     </div>
   </section>
 </main>
