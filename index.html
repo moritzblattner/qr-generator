@@ -345,6 +345,36 @@
     text-align: right;
     font-variant-numeric: tabular-nums;
   }
+  .slider-row .val.wide { min-width: 92px; }
+
+  /* ── Collapsible ── */
+  .collapsible {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.25s ease, margin-top 0.25s ease;
+  }
+  .collapsible.open {
+    max-height: 120px;
+    margin-top: 10px;
+  }
+
+  .toggle-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .label-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .label-inline .hint {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--beige-500);
+  }
 
   /* ── Preview ── */
   .preview-wrap { flex: 1; min-height: 0; }
@@ -449,6 +479,16 @@
       <div class="field">
         <textarea id="qr-text" placeholder="Enter URL or text...">https://example.com</textarea>
       </div>
+      <div class="field" style="margin-bottom:0;">
+        <div class="label-inline">
+          <label style="margin-bottom:6px;">Error Resistance</label>
+          <span class="hint" id="ec-hint">More points make the code survive damage & logos</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" id="ec-level" min="0" max="3" value="1">
+          <span class="val wide" id="ec-label">Medium · 15%</span>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -481,17 +521,46 @@
         </div>
         <div class="field">
           <label>Background</label>
-          <div class="color-row" id="bg-row">
+          <div class="color-row disabled" id="bg-row">
             <input type="color" id="bg-color" value="#FBF8F3">
             <input type="text" class="hex" id="bg-hex" value="#FBF8F3">
           </div>
         </div>
       </div>
-      <label class="toggle" style="margin-top:2px;">
-        <input type="checkbox" id="bg-transparent">
-        <span class="track"></span>
-        <span>Transparent background</span>
-      </label>
+
+      <div class="collapsible" id="fg2-wrap">
+        <div class="row">
+          <div class="field" style="margin-bottom:0;">
+            <label>Foreground (end color)</label>
+            <div class="color-row">
+              <input type="color" id="fg2-color" value="#9E8768">
+              <input type="text" class="hex" id="fg2-hex" value="#9E8768">
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Direction</label>
+            <select id="fg-direction">
+              <option value="diagonal">Diagonal ↘</option>
+              <option value="horizontal">Horizontal →</option>
+              <option value="vertical">Vertical ↓</option>
+              <option value="anti-diagonal">Anti-diag ↙</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="bg-transparent" checked>
+          <span class="track"></span>
+          <span>Transparent background</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="fg-gradient">
+          <span class="track"></span>
+          <span>Foreground gradient</span>
+        </label>
+      </div>
     </div>
 
     <div class="card">
@@ -514,7 +583,7 @@
   <!-- Preview + actions -->
   <section class="preview-wrap">
     <div class="preview-card">
-      <div class="qr-frame" id="qr-frame">
+      <div class="qr-frame transparent" id="qr-frame">
         <canvas id="qr-canvas" width="400" height="400"></canvas>
       </div>
     </div>
@@ -557,6 +626,7 @@
     });
   }
   syncColor($('fg-color'), $('fg-hex'));
+  syncColor($('fg2-color'), $('fg2-hex'));
   syncColor($('bg-color'), $('bg-hex'));
 
   // Transparent background toggle
@@ -564,6 +634,25 @@
     const on = $('bg-transparent').checked;
     $('bg-row').classList.toggle('disabled', on);
     $('qr-frame').classList.toggle('transparent', on);
+    render();
+  });
+
+  // Gradient toggle
+  $('fg-gradient').addEventListener('change', () => {
+    $('fg2-wrap').classList.toggle('open', $('fg-gradient').checked);
+    render();
+  });
+  $('fg-direction').addEventListener('change', render);
+
+  // Error correction slider
+  const EC_LEVELS = [
+    { code: 'L', label: 'Low · 7%' },
+    { code: 'M', label: 'Medium · 15%' },
+    { code: 'Q', label: 'Quartile · 25%' },
+    { code: 'H', label: 'High · 30%' },
+  ];
+  $('ec-level').addEventListener('input', () => {
+    $('ec-label').textContent = EC_LEVELS[+$('ec-level').value].label;
     render();
   });
 
@@ -597,20 +686,43 @@
   $('qr-text').addEventListener('input', render);
 
   function getQR() {
-    const ec = 0; // Medium
     const text = $('qr-text').value || ' ';
-    const qr = qrcode(0, 'M');
+    const ec = EC_LEVELS[+$('ec-level').value].code;
+    const qr = qrcode(0, ec);
     qr.addData(text);
     qr.make();
     return qr;
+  }
+
+  function gradientCoords(direction, size) {
+    switch (direction) {
+      case 'horizontal':    return [0, 0, size, 0];
+      case 'vertical':      return [0, 0, 0, size];
+      case 'anti-diagonal': return [size, 0, 0, size];
+      case 'diagonal':
+      default:              return [0, 0, size, size];
+    }
+  }
+
+  function gradientSvgCoords(direction) {
+    switch (direction) {
+      case 'horizontal':    return { x1: '0%', y1: '0%', x2: '100%', y2: '0%' };
+      case 'vertical':      return { x1: '0%', y1: '0%', x2: '0%', y2: '100%' };
+      case 'anti-diagonal': return { x1: '100%', y1: '0%', x2: '0%', y2: '100%' };
+      case 'diagonal':
+      default:              return { x1: '0%', y1: '0%', x2: '100%', y2: '100%' };
+    }
   }
 
   function render() {
     const qr = getQR();
     const moduleCount = qr.getModuleCount();
     const fg = $('fg-color').value;
+    const fg2 = $('fg2-color').value;
     const bg = $('bg-color').value;
     const transparent = $('bg-transparent').checked;
+    const useGradient = $('fg-gradient').checked;
+    const direction = $('fg-direction').value;
     const shape = currentShape;
     const margin = 2;
     const totalModules = moduleCount + margin * 2;
@@ -627,7 +739,15 @@
     const iconStart = Math.floor((moduleCount - iconModules) / 2);
     const iconEnd = iconStart + iconModules;
 
-    ctx.fillStyle = fg;
+    let fgStyle = fg;
+    if (useGradient) {
+      const [x0, y0, x1, y1] = gradientCoords(direction, SIZE);
+      const grad = ctx.createLinearGradient(x0, y0, x1, y1);
+      grad.addColorStop(0, fg);
+      grad.addColorStop(1, fg2);
+      fgStyle = grad;
+    }
+    ctx.fillStyle = fgStyle;
     for (let row = 0; row < moduleCount; row++) {
       for (let col = 0; col < moduleCount; col++) {
         if (!qr.isDark(row, col)) continue;
@@ -691,7 +811,6 @@
         ctx.clearRect(iconX - pad, iconY - pad, iconPx + pad * 2, iconPx + pad * 2);
       }
       ctx.drawImage(iconImg, iconX, iconY, iconPx, iconPx);
-      ctx.fillStyle = fg;
     }
   }
 
@@ -707,8 +826,11 @@
     const moduleCount = qr.getModuleCount();
     const shape = currentShape;
     const fg = $('fg-color').value;
+    const fg2 = $('fg2-color').value;
     const bg = $('bg-color').value;
     const transparent = $('bg-transparent').checked;
+    const useGradient = $('fg-gradient').checked;
+    const direction = $('fg-direction').value;
     const margin = 2;
     const total = moduleCount + margin * 2;
     const s = 10;
@@ -746,10 +868,18 @@
     }
 
     const bgRect = transparent ? '' : `<rect width="${svgSize}" height="${svgSize}" fill="${bg}"/>`;
+    let defs = '';
+    let fillAttr = fg;
+    if (useGradient) {
+      const c = gradientSvgCoords(direction);
+      defs = `<defs><linearGradient id="fg" x1="${c.x1}" y1="${c.y1}" x2="${c.x2}" y2="${c.y2}"><stop offset="0%" stop-color="${fg}"/><stop offset="100%" stop-color="${fg2}"/></linearGradient></defs>`;
+      fillAttr = 'url(#fg)';
+    }
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgSize} ${svgSize}" width="${svgSize}" height="${svgSize}">
+  ${defs}
   ${bgRect}
-  <g fill="${fg}">${paths}</g>
+  <g fill="${fillAttr}">${paths}</g>
 </svg>`;
 
     const blob = new Blob([svg], { type: 'image/svg+xml' });
