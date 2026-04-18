@@ -531,6 +531,11 @@
             <input type="color" id="fg-color" value="#2B2319">
             <input type="text" class="hex" id="fg-hex" value="#2B2319">
           </div>
+          <label class="toggle" style="margin-top:8px;">
+            <input type="checkbox" id="fg-gradient">
+            <span class="track"></span>
+            <span>Gradient</span>
+          </label>
         </div>
         <div class="field">
           <label>Background</label>
@@ -538,6 +543,11 @@
             <input type="color" id="bg-color" value="#FBF8F3">
             <input type="text" class="hex" id="bg-hex" value="#FBF8F3">
           </div>
+          <label class="toggle" style="margin-top:8px;">
+            <input type="checkbox" id="bg-transparent" checked>
+            <span class="track"></span>
+            <span>Transparent</span>
+          </label>
         </div>
       </div>
 
@@ -560,19 +570,6 @@
             </select>
           </div>
         </div>
-      </div>
-
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="bg-transparent" checked>
-          <span class="track"></span>
-          <span>Transparent background</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="fg-gradient">
-          <span class="track"></span>
-          <span>Foreground gradient</span>
-        </label>
       </div>
     </div>
 
