@@ -4,26 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QR Code Generator</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23191819'/%3E%3Crect x='4' y='4' width='10' height='10' rx='1' fill='%23f6f4f2'/%3E%3Crect x='6' y='6' width='6' height='6' fill='%23191819'/%3E%3Crect x='18' y='4' width='10' height='10' rx='1' fill='%23f6f4f2'/%3E%3Crect x='20' y='6' width='6' height='6' fill='%23191819'/%3E%3Crect x='4' y='18' width='10' height='10' rx='1' fill='%23f6f4f2'/%3E%3Crect x='6' y='20' width='6' height='6' fill='%23191819'/%3E%3Crect x='18' y='18' width='4' height='4' fill='%23f6f4f2'/%3E%3Crect x='24' y='18' width='4' height='4' fill='%23f6f4f2'/%3E%3Crect x='18' y='24' width='4' height='4' fill='%23f6f4f2'/%3E%3Crect x='24' y='24' width='4' height='4' fill='%23f6f4f2'/%3E%3C/svg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
   :root {
-    --beige-50:  #FBF8F3;
-    --beige-100: #F5EFE4;
-    --beige-200: #EADFCC;
-    --beige-300: #D9C8AC;
-    --beige-400: #BFA884;
-    --beige-500: #9E8768;
-    --beige-600: #7A6850;
-    --beige-700: #55483A;
-    --beige-800: #3A3128;
-    --ink:       #2B2319;
+    --beige-50:  #f6f4f2;
+    --beige-100: #eeebe7;
+    --beige-200: #e0cfc2;
+    --beige-300: #d4bfae;
+    --beige-400: #dda882;
+    --beige-500: #c49470;
+    --beige-600: #4b5668;
+    --beige-700: #364050;
+    --beige-800: #252d3a;
+    --ink:       #191819;
     --white:     #FFFFFF;
 
     --radius: 10px;
     --radius-sm: 6px;
-    --shadow-sm: 0 1px 2px rgba(58,49,40,0.04);
-    --shadow-md: 0 4px 20px rgba(58,49,40,0.06);
+    --shadow-sm: 0 1px 2px rgba(25,24,25,0.04);
+    --shadow-md: 0 4px 20px rgba(25,24,25,0.06);
 
     --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   }
@@ -138,7 +139,7 @@
   input[type="text"]:focus, textarea:focus, select:focus {
     border-color: var(--beige-500);
     background: var(--white);
-    box-shadow: 0 0 0 3px rgba(158,135,104,0.15);
+    box-shadow: 0 0 0 3px rgba(75,86,104,0.15);
   }
   textarea {
     resize: none;
@@ -147,7 +148,7 @@
   }
   select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%237A6850' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234b5668' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 32px;
@@ -184,7 +185,7 @@
   .shape-option.active {
     border-color: var(--beige-600);
     background: var(--white);
-    box-shadow: 0 0 0 2px rgba(122,104,80,0.15);
+    box-shadow: 0 0 0 2px rgba(75,86,104,0.15);
   }
   .shape-option svg {
     width: 22px;
